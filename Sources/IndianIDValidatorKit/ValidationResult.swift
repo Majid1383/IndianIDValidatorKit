@@ -15,6 +15,4 @@ public enum ValidationResult : Sendable, Equatable {
         if case .valid = self { return true }
         return false
     }
-    
-    
 }
