@@ -12,3 +12,12 @@ import Testing
 @Test func packageBuilds() {
     #expect(true)
 }
+
+
+@Test func validIsValid() {
+    #expect(ValidationResult.valid.isValid)
+}
+
+@Test func invalidIsNotValid() {
+    #expect(!ValidationResult.invalid(.empty).isValid)
+}
