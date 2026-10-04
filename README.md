@@ -13,8 +13,11 @@ Offline format validation for Indian IDs, written in Swift.
 |---|---|---|
 | PAN | `PANValidator` | 5 letters, 4 digits, 1 letter |
 | IFSC | `IFSCValidator` | 4 letters, `0`, 6 letters or digits |
+| Mobile number | `MobileNumberValidator` | 10 digits starting with 6-9. An optional `+91`, `91` or `0` prefix is accepted, and spaces and hyphens are ignored |
+| PIN code | `PINCodeValidator` | 6 digits, first digit not `0` |
+| UPI ID | `UPIIDValidator` | `name@handle`. Checked leniently, because handles change over time |
 
-More are planned, such as mobile number, PIN code and UPI ID.
+Planned: Aadhaar, GSTIN, TAN, Voter ID, Passport and vehicle registration.
 
 ## Installation
 
@@ -28,7 +31,7 @@ Or add it to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Majid1383/IndianIDValidatorKit", from: "0.1.0")
+    .package(url: "https://github.com/Majid1383/IndianIDValidatorKit", from: "0.2.0")
 ],
 targets: [
     .target(name: "YourApp", dependencies: ["IndianIDValidatorKit"])
@@ -50,19 +53,22 @@ case .invalid(let reason):
 }
 
 // Or just check a Bool:
-IFSCValidator().validate("SBIN0001234").isValid
+IFSCValidator().validate("SBIN0001234").isValid             // true
+MobileNumberValidator().validate("+91 98765 43210").isValid // true
+PINCodeValidator().validate("400001").isValid               // true
+UPIIDValidator().validate("name@oksbi").isValid             // true
 ```
 
-Inputs are trimmed and uppercased before validation.
+Inputs are trimmed before validation. PAN and IFSC are also uppercased, and the mobile validator ignores spaces and hyphens.
 
 ### Failure reasons
 
 | Case | Meaning |
 |---|---|
 | `.empty` | Nothing was entered |
-| `.wrongLength(expected:actual:)` | Wrong number of characters |
-| `.invalidCharacters` | Contains characters that are not ASCII letters or digits |
-| `.invalidFormat` | Right length, but letters and digits are in the wrong positions |
+| `.wrongLength(expected:actual:)` | Wrong number of characters (not used for UPI IDs, which vary in length) |
+| `.invalidCharacters` | Contains characters outside the allowed set (non-ASCII, symbols and so on) |
+| `.invalidFormat` | Right characters, but the structure or position rules fail |
 
 ## What this package does not do
 
